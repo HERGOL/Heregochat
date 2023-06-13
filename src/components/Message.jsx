@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 
@@ -7,10 +7,37 @@ const Message = ({ message }) => {
   const { data } = useContext(ChatContext);
 
   const ref = useRef();
+  const [isNotified, setIsNotified] = useState(false);
+  const lastMessageRef = useRef(null);
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
-  }, [message]);
+
+    // Vérifier si le message est le dernier et afficher une notification
+    if (message.senderId !== currentUser.uid && message === lastMessageRef.current && !isNotified) {
+      showNotification();
+      setIsNotified(true);
+    }
+
+    // Mettre à jour la référence du dernier message
+    lastMessageRef.current = message;
+  }, [message, currentUser.uid, isNotified]);
+
+  const showNotification = () => {
+    if (Notification.permission === "granted") {
+      new Notification("Nouveau message reçu", {
+        body: message.text,
+      });
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          new Notification("Nouveau message reçu", {
+            body: message.text,
+          });
+        }
+      });
+    }
+  };
 
   return (
     <div
