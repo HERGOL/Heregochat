@@ -21,7 +21,8 @@ const Message = ({ message }) => {
 
     // Mettre à jour la référence du dernier message
     lastMessageRef.current = message;
-  }, [message, currentUser.uid, isNotified]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message, currentUser.uid]);
 
   const showNotification = () => {
     if (Notification.permission === "granted") {

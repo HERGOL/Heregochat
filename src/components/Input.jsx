@@ -87,6 +87,7 @@ const Input = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line
   }, []);
 
   return (
